@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мої тести</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Мої тести</h1>
+    <!--посилання на головну сторінку та тести-->
+    <nav>
+      <a href="index.html">Головна</a>
+      <a href="create.html">Створити тест</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>Список тестів</h2>
+    <!--Поле для списку-->
+    <div id="quiz-list"></div>
+    <p id="empty" class="muted">Поки що немає тестів.</p>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    const list = document.getElementById('quiz-list');
+    const empty = document.getElementById('empty');
+
+    function render() {
+      list.innerHTML = '';
+      const quizzes = StorageService.getKey('quizzes') || [];
+
+      if (quizzes.length === 0) {
+        empty.style.display = 'block';
+        return;
+      } else empty.style.display = 'none';
+
+      quizzes.forEach(q => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <h3>${escapeHtml(q.name)}</h3>
+          <p class="muted">${escapeHtml(q.description || '')}</p>
+          <div class="actions">
+            <a class="btn" href="quiz.html?quiz=${encodeURIComponent(q.name)}">Почати</a>
+            <a class="btn ghost" href="create.html?edit=${encodeURIComponent(q.name)}">Редагувати</a>
+            <button class="btn danger" data-name="${escapeHtml(q.name)}">Видалити</button>
+          </div>
+        `;
+        div.querySelector('.danger').onclick = (e) => {
+          if (!confirm('Видалити цей тест?')) return;
+          StorageService.removeQuiz(e.target.dataset.name);
+          render();
+        };
+        list.appendChild(div);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
