@@ -33,7 +33,6 @@
     const editName = params.get('edit');
     let editingQuiz = null;
 
-    // функція створення блоку питання
     function addQuestion(data = null) {
       const div = document.createElement('div');
       div.className = 'question';
@@ -70,7 +69,6 @@
 
     document.getElementById('add-q').onclick = () => addQuestion();
 
-    // Якщо редагуємо тест — завантажуємо дані
     if (editName) {
       editingQuiz = StorageService.findValue('quizzes', q => q.name === editName, true);
       if (editingQuiz) {
@@ -84,7 +82,6 @@
       addQuestion();
     }
 
-    // Збереження тесту
     document.getElementById('save').onclick = e => {
       e.preventDefault();
       const name = document.getElementById('name').value.trim();
