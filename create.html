@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Створення тесту</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="title">Новий тест</h1>
+  </header>
+
+  <main class="container">
+    <form id="form" class="card">
+      <label>Назва тесту:
+        <input id="name" required>
+      </label>
+      <label>Опис:
+        <input id="desc">
+      </label>
+
+      <div id="questions"></div>
+      <button id="add-q" type="button" class="btn ghost">+ Питання</button>
+      <button id="save" class="btn">Зберегти тест</button>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    const qList = document.getElementById('questions');
+    const params = new URLSearchParams(location.search);
+    const editName = params.get('edit');
+    let editingQuiz = null;
+
+    // функція створення блоку питання
+    function addQuestion(data = null) {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `
+        <div class="q-header">
+          <label>Питання:
+            <input class="qtext" value="${data?.text || ''}">
+          </label>
+          <button type="button" class="btn tiny danger remove-q">&#128465;</button>
+        </div>
+        <div class="opts"></div>
+        <button type="button" class="btn tiny ghost add-opt">+ Варіант</button>
+      `;
+
+      const optsEl = div.querySelector('.opts');
+
+      function addOpt(opt) {
+        const o = document.createElement('div');
+        o.className = 'opt';
+        o.innerHTML = `
+          <label>Варіант: <input class="opt-text" value="${opt?.text || ''}"></label>
+          <label>Правильний <input type="checkbox" class="opt-corr" ${opt?.isCorrect ? 'checked' : ''}></label>
+        `;
+        optsEl.appendChild(o);
+      }
+
+      (data?.options || [{}, {}]).forEach(addOpt);
+
+      div.querySelector('.add-opt').onclick = () => addOpt();
+      div.querySelector('.remove-q').onclick = () => div.remove();
+
+      qList.appendChild(div);
+    }
+
+    document.getElementById('add-q').onclick = () => addQuestion();
+
+    // Якщо редагуємо тест — завантажуємо дані
+    if (editName) {
+      editingQuiz = StorageService.findValue('quizzes', q => q.name === editName, true);
+      if (editingQuiz) {
+        document.getElementById('title').textContent = 'Редагування тесту';
+        document.getElementById('name').value = editingQuiz.name;
+        document.getElementById('desc').value = editingQuiz.description || '';
+        qList.innerHTML = '';
+        editingQuiz.questions.forEach(addQuestion);
+      }
+    } else {
+      addQuestion();
+    }
+
+    // Збереження тесту
+    document.getElementById('save').onclick = e => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      if (!name) return alert('Вкажіть назву тесту');
+
+      const desc = document.getElementById('desc').value.trim();
+      const questions = [...document.querySelectorAll('.question')].map(q => {
+        const text = q.querySelector('.qtext').value || 'Питання';
+        const opts = [...q.querySelectorAll('.opt')].map(o => ({
+          text: o.querySelector('.opt-text').value || 'Варіант',
+          isCorrect: o.querySelector('.opt-corr').checked,
+          value: 1
+        }));
+        return { text, options: opts };
+      });
+
+      if (questions.length === 0) return alert('Додайте хоча б одне питання.');
+
+      const quiz = { name, description: desc, questions };
+      StorageService.saveOrUpdateQuiz(quiz, editName);
+      alert('Збережено!');
+      location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>
