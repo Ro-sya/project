@@ -19,10 +19,14 @@ function getResultDetails(summary) {
   let image = "";
   let className = "";
 
-  if (percentage >= 50) {
-    message = "Хороший результат";
+  if (percentage >= 70) {
+    message = "Прекрасний результат";
     image = "/images/success.jpg";
     className = "success";
+  } else if (percentage >= 30 && percentage < 70) {
+    message = "Хороший результат";
+    image = "/images/good.jpg";
+    className = "good";
   } else {
     message = "Спробуйте ще раз";
     image = "/images/fail.jpg";

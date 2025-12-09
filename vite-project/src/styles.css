@@ -190,7 +190,10 @@ input[type="checkbox"] {
   border: 3px solid #059669;
 }
 
-/* Якщо менше 50% */
+.modal-content.good {
+  border: 3px solid #e4e417;
+}
+
 .modal-content.failure {
   border: 3px solid #ef4444;
 }
