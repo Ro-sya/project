@@ -1,19 +1,29 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import QuizList from "./components/QuizList";
-import CreateQuiz from "./components/CreateQuiz";
-import QuizRunner from "./components/QuizRunner";
-import QuizResult from "./components/QuizResult";
+import Layout from "./components/Layout.jsx";
+import HomePage from "./components/HomePage.jsx";
+import QuizList from "./components/QuizList.jsx";
+import CreateQuiz from "./components/CreateQuiz.jsx";
+import QuizRunner from "./components/QuizRunner.jsx";
+import QuizResult from "./components/QuizResult.jsx";
 import "./styles.css";
+
+// NOTE: You need a working 'StorageService' import in your pages for this to run.
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<QuizList />} />
-        <Route path="/create" element={<CreateQuiz />} />
-        <Route path="/edit/:name" element={<CreateQuiz />} />
-        <Route path="/quiz/:name" element={<QuizRunner />} />
-        <Route path="/result/:ts" element={<QuizResult />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="list" element={<QuizList />} />
+          <Route path="create" element={<CreateQuiz />} />
+          <Route path="edit/:name" element={<CreateQuiz />} />
+
+          <Route path="quiz/:name" element={<QuizRunner />} />
+          <Route path="result/:ts" element={<QuizResult />} />
+
+          <Route path="*" element={<h2>404 | Page Not Found</h2>} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

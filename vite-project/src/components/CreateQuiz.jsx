@@ -41,7 +41,19 @@ export default function CreateQuiz() {
   };
 
   const save = () => {
-    if (!testName.trim()) return alert("Вкажіть назву тесту");
+    if (!testName.trim()) return alert("Please specify the quiz name");
+
+    // Simple validation
+    if (questions.length === 0 || questions.some((q) => q.options.length < 2)) {
+      return alert(
+        "The quiz must contain at least one question with a minimum of two options."
+      );
+    }
+    if (questions.some((q) => !q.options.some((o) => o.isCorrect))) {
+      return alert(
+        "Every question must have at least one correct answer selected."
+      );
+    }
 
     const quiz = {
       name: testName,
@@ -50,84 +62,109 @@ export default function CreateQuiz() {
     };
 
     StorageService.updateQuiz(quiz, name);
-    alert("Збережено!");
-    navigate("/");
+    alert("Saved!");
+    navigate("/list");
   };
 
   return (
-    <main className="container">
-      <h1>{name ? "Редагування" : "Створення"} тесту</h1>
+    <main>
+      <h2>{name ? "Editing quiz" : "Creating quiz"}</h2>
 
-      <div className="card">
-        <label>
-          Назва тесту:
+      <div className="card form-card">
+        <label className="input-group">
+          Quiz Name:
           <input
+            type="text"
             value={testName}
             onChange={(e) => setTestName(e.target.value)}
+            placeholder="Enter the quiz name"
           />
         </label>
 
-        <label>
-          Опис:
-          <input value={desc} onChange={(e) => setDesc(e.target.value)} />
+        <label className="input-group">
+          Description:
+          <input
+            type="text"
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            placeholder="A short description of the quiz"
+          />
         </label>
+
+        <hr className="divider" />
+
+        <h3>Questions:</h3>
 
         <div>
           {questions.map((q, qi) => (
-            <div className="question" key={qi}>
+            <div className="card question-card" key={qi}>
               <div className="q-header">
-                <label>
-                  Питання:
+                <label className="input-group">
+                  Question {qi + 1}:
                   <input
+                    type="text"
                     value={q.text}
                     onChange={(e) => updateQuestionText(qi, e.target.value)}
+                    placeholder="Enter the question text"
                   />
                 </label>
                 <button
                   className="btn tiny danger"
                   onClick={() => removeQuestion(qi)}
+                  title="Remove question"
                 >
-                  🗑
+                  🗑 Remove
                 </button>
               </div>
 
-              {q.options.map((o, oi) => (
-                <div className="opt" key={oi}>
-                  <label>
-                    Варіант:
-                    <input
-                      value={o.text || ""}
-                      onChange={(e) =>
-                        updateOpt(qi, oi, "text", e.target.value)
-                      }
-                    />
-                  </label>
+              <div className="options-list">
+                <h4>Answer Options:</h4>
+                {q.options.map((o, oi) => (
+                  <div className="opt" key={oi}>
+                    <label className="input-group opt-input">
+                      Option {oi + 1}:
+                      <input
+                        type="text"
+                        value={o.text || ""}
+                        onChange={(e) =>
+                          updateOpt(qi, oi, "text", e.target.value)
+                        }
+                        placeholder="Option text"
+                      />
+                    </label>
 
-                  <label>
-                    Правильний
-                    <input
-                      type="checkbox"
-                      checked={o.isCorrect || false}
-                      onChange={(e) =>
-                        updateOpt(qi, oi, "isCorrect", e.target.checked)
-                      }
-                    />
-                  </label>
-                </div>
-              ))}
+                    <label className="checkbox-group">
+                      <input
+                        type="checkbox"
+                        checked={o.isCorrect || false}
+                        onChange={(e) =>
+                          updateOpt(qi, oi, "isCorrect", e.target.checked)
+                        }
+                      />
+                      <span>Correct</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
 
-              <button className="btn tiny ghost" onClick={() => addOpt(qi)}>
-                + Варіант
+              <button
+                className="btn tiny secondary ghost add-opt-btn"
+                onClick={() => addOpt(qi)}
+              >
+                + Add Option
               </button>
             </div>
           ))}
         </div>
 
-        <button className="btn ghost" onClick={addQuestion}>
-          + Питання
+        <button
+          className="btn secondary ghost add-question-btn"
+          onClick={addQuestion}
+        >
+          + Add Question
         </button>
-        <button className="btn" onClick={save}>
-          Зберегти
+        <button className="btn primary save-btn" onClick={save}>
+          {name ? "Save Changes" : "Create Quiz"}
         </button>
       </div>
     </main>

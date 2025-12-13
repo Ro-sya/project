@@ -1,12 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
+
 import { StorageService } from "../services/storage";
 
 export default function QuizRunner() {
   const { name } = useParams();
+
   const navigate = useNavigate();
+
   const quiz = StorageService.findQuiz(name);
 
-  if (!quiz) return <p>Тест не знайдено</p>;
+  if (!quiz) return <p>Quiz is not found</p>;
 
   const finish = () => {
     let score = 0;
@@ -15,15 +18,19 @@ export default function QuizRunner() {
       const checked = [
         ...document.querySelectorAll(`input[name="q${qi}"]:checked`),
       ];
+
       checked.forEach((c) => {
         if (q.options[c.value].isCorrect) score++;
       });
     });
 
     const ts = new Date().toISOString();
+
     StorageService.add("results", {
       quizName: quiz.name,
+
       timestamp: ts,
+
       summary: `${score}/${quiz.questions.length}`,
     });
 
@@ -43,6 +50,7 @@ export default function QuizRunner() {
           {q.options.map((o, oi) => (
             <label key={oi}>
               <input type="checkbox" name={`q${qi}`} value={oi} />
+
               {o.text}
             </label>
           ))}
@@ -50,7 +58,7 @@ export default function QuizRunner() {
       ))}
 
       <button className="btn" onClick={finish}>
-        Завершити
+        Finish
       </button>
     </main>
   );

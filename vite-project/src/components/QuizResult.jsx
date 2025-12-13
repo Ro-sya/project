@@ -5,7 +5,7 @@ function getResultDetails(summary) {
   const parts = summary.split("/");
   if (parts.length !== 2) {
     return {
-      message: "Результат не вдалося визначити.",
+      message: "Result could not be determined.",
       image: "default.png",
       className: "default",
     };
@@ -20,15 +20,15 @@ function getResultDetails(summary) {
   let className = "";
 
   if (percentage >= 70) {
-    message = "Прекрасний результат";
+    message = "Excellent Result";
     image = "/images/success.jpg";
     className = "success";
   } else if (percentage >= 30 && percentage < 70) {
-    message = "Хороший результат";
+    message = "Good Result";
     image = "/images/good.jpg";
     className = "good";
   } else {
-    message = "Спробуйте ще раз";
+    message = "Try Again";
     image = "/images/fail.jpg";
     className = "failure";
   }
@@ -42,7 +42,7 @@ export default function QuizResult() {
     (r) => r.timestamp === ts
   );
 
-  if (!result) return <p>Результат не знайдено.</p>;
+  if (!result) return <p>Result not found.</p>;
 
   const resultDetails = getResultDetails(result.summary);
 
@@ -52,20 +52,21 @@ export default function QuizResult() {
         <h2>{result.quizName}</h2>
 
         <p className="score-text">
-          <strong>Ваш результат:</strong> {result.summary}
+          <strong>Your Score:</strong> {result.summary}
         </p>
         <p className="result-message">{resultDetails.message}</p>
 
         <div className="result-image-container">
+          {/* NOTE: Ensure these images exist in your public folder */}
           <img
             src={resultDetails.image}
-            alt="Результат тесту"
+            alt="Quiz Result"
             className="result-image"
           />
         </div>
 
         <a className="btn modal-btn" href="/">
-          На головну
+          Back to home
         </a>
       </div>
     </div>
