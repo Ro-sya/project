@@ -1,11 +1,6 @@
-/**
- * src/services/storage.js
- * Service for handling all application data persistence via localStorage.
- */
+
 export const StorageService = {
-  // Key used to store all quizzes
   QUIZZES_KEY: "quizzes",
-  // Key used to store quiz results
   RESULTS_KEY: "results",
 
   get(key) {
@@ -34,21 +29,18 @@ export const StorageService = {
   updateQuiz(newQuiz, oldName) {
     const quizzes = this.get(this.QUIZZES_KEY);
 
-    // Check if we are editing an existing quiz
     const existingIndex = quizzes.findIndex((q) => q.name === oldName);
 
     if (existingIndex !== -1 && oldName === newQuiz.name) {
-      // Editing: replace the old quiz at the same index
       quizzes[existingIndex] = newQuiz;
     } else if (existingIndex !== -1 && oldName !== newQuiz.name) {
-      // Editing and Name Changed: Remove old, add new
       quizzes.splice(existingIndex, 1);
       quizzes.push(newQuiz);
     } else if (existingIndex === -1 && oldName) {
-      // Name must have changed from an old, now non-existent quiz (shouldn't happen with proper flow)
+    
       quizzes.push(newQuiz);
     } else {
-      // Creating New: simply add the new quiz
+     
       quizzes.push(newQuiz);
     }
 
