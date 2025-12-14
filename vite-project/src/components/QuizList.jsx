@@ -7,7 +7,6 @@ export default function QuizList() {
   const remove = (name) => {
     if (confirm("Delete this quiz?")) {
       StorageService.removeQuiz(name);
-      // Using location.reload() for simplicity as in original code
       location.reload();
     }
   };
