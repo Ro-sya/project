@@ -57,7 +57,7 @@ export default function QuizResult() {
         <p className="result-message">{resultDetails.message}</p>
 
         <div className="result-image-container">
-          {/* NOTE: Ensure these images exist in your public folder */}
+          {}
           <img
             src={resultDetails.image}
             alt="Quiz Result"
