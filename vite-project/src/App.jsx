@@ -7,7 +7,6 @@ import QuizRunner from "./components/QuizRunner.jsx";
 import QuizResult from "./components/QuizResult.jsx";
 import "./styles.css";
 
-// NOTE: You need a working 'StorageService' import in your pages for this to run.
 
 export default function App() {
   return (
